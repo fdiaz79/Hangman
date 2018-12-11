@@ -1,2 +1,2 @@
 # Hangman
-The classic game of hangman with some queen on it
+The classic game of hangman with some Queen on it
