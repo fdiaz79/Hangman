@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Page Title</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style.css" />
+
+        <!-- Added link to the jQuery Library -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+
+        
+    </head>
+    <body>
+        
+        <div class="container title-container">
+            Lets Hang the Queen!!!
+        </div>
+        
+        <div class="container mainContent">
+            <div class="row">
+                <div class="col-md-4">
+                    FUN FACTS
+                    <span id="funFacts">Input some text here</span>
+                </div>
+                <div class="col-md-4">
+                    MAIN AREA
+                    <span id="mainArea">Input some text here</span>
+                </div>
+                <div class="col-md-4" id="drawing">
+                    HANGMAN
+                    <div class="row">
+                        <div class="col-md-6">
+                            HITS: <span id="hitCounts"> 0 </span>
+                        </div>
+                        <div class="col-md-6">
+                            MISTAKES: <span id="mistakeCounts"> 0 </span>
+                        </div>
+                    </div>
+                    <div id="drawing">Input some text here</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container" id="instContainer">
+            GUESS THE TITLE OF THE QUEEN'S SONG I'M THINKING!!!
+        </div>
+
+
+
+
+
+        <script>
+            $(document).ready(function() {
+                //variable declaration
+
+                var queenObject = {
+                    musicians : ["Freddie Mercury","John Deacon","Bryan May","Roger Taylor"],
+                    albums: 15,
+                    songs : ["killer queen", "it's a hard life", "you are my best friend", "love of my life", "the prophet's song", "hammer to fall", "is this the world we created", "the show must go on", "don't stop me now", "bicycle race"],
+                    pictures : []
+                };
+                
+                var gameTrigger = true;
+                var chosenSong;
+                var songIndex;
+                var chosenLetter;
+                var chosenArray = [];
+                var hit = false;
+                var hitCounter = 0;
+                var control = 0;
+                var controlSpace = false;
+                var mistakes = 10;
+                var spaceCounter = 0;
+                var alreadyControl = false;
+
+                var displaySongArray = [];
+                var displaySongString = "";
+                var letterStorage = [" ", "control", "alt", "escape", "capsLock", "tab", "enter", "shift", "backspace"];
+
+                var mainAreaJ = document.getElementById('mainArea');
+                var instContainerJ = document.getElementById('instContainer');
+                
+                // choose a random song from the array
+                console.log(queenObject.songs.length);
+                songIndex = Math.floor(Math.random()*queenObject.songs.length);
+                console.log(songIndex);
+                chosenSong = queenObject.songs[songIndex];
+                console.log(chosenSong);
+
+
+                //display the spaces of the song
+                
+                for (var i = 0; i < chosenSong.length; i++){
+                    
+                    if (chosenSong.charAt(i)==" "){
+                        displaySongString = displaySongString + " ";
+                    } else {
+                        displaySongString = displaySongString + "-";
+                    }
+                }
+                console.log(displaySongString);
+                
+                mainAreaJ.textContent = displaySongString;
+                console.log(gameTrigger);
+
+                // do {
+                    
+                  
+                    // prompt for a letter
+                    document.onkeyup= function(event){
+                        
+                        chosenLetter = event.key.toLowerCase();
+                        console.log(chosenLetter);
+                        alreadyControl = false;
+                        
+                        
+
+                        for (var l = 0; l < letterStorage.length ; l++) {
+                            
+                            if (chosenLetter == letterStorage[l]){
+                                alreadyControl = true;
+                            } 
+                            
+                        };
+                        console.log(alreadyControl);
+                        console.log(letterStorage);
+
+                        if (alreadyControl) {
+                            instContainerJ.textContent = "YOU PLAYED THIS KEY ALREADY!!! TRY ANOTHER ONE.";
+                        } else { 
+                            letterStorage.push(chosenLetter);
+
+                            //compare the letter with the song
+                            hit = false;
+                            control = 0;
+                            
+                            for (var x = 0; x < displaySongString.length; x++) {
+
+                                if (!controlSpace) {
+                                    if (chosenSong.charAt(x) == " "){
+                                            spaceCounter++;
+                                    }
+                                }
+
+                                if (chosenLetter == chosenSong.charAt(x)){
+
+                                    // change dashes for letter
+                                    displaySongString = displaySongString.substr(0,x) + chosenSong.charAt(x) + displaySongString.substr(x+1);
+                                    console.log(displaySongString);
+
+                                    control ++;
+                                    hitCounter ++;
+                                    if (control == 1){
+                                        hit = true;
+                                    }
+
+                                }
+
+                                mainAreaJ.textContent = displaySongString;
+                            }
+                        
+
+                        
+                            controlSpace = true;
+
+                            if (hit){
+                                instContainerJ.textContent = "Good Job choosing the " + chosenLetter + ". You still have " + mistakes + " errors left. Guess another key!!!";
+                                $('#hitCounts').text(hitCounter);
+                                console.log(chosenSong.length);
+                                console.log(hitCounter, spaceCounter);
+                                if (hitCounter+spaceCounter >= chosenSong.length) {
+                                    instContainerJ.textContent = "GOD SAVED THE QUEEN!!!"
+                                }
+                            } else {
+                                mistakes --;
+                                instContainerJ.textContent = "Ooops!!! you really don't like the Queen. Choosing the " + chosenLetter + " counts as high treason. You still have " + mistakes + " errors left. Guess another key!!!";
+                                $('#mistakeCounts').text(10-mistakes);
+                                if (mistakes<=0) {
+                                    instContainerJ.textContent = "THE QUEEN IS DEAD, LONG LIVE THE QUEEN!!!"
+                                }
+                            }
+                        }
+
+                        gameTrigger = false;                       
+
+                    };
+                // } while (gameTrigger);
+
+                // var continuePlaying = prompt ("To finish playing, press 'N'; to key play hit any key");
+
+                // console.log(continuePlaying);
+
+
+                    // change picture of hangman
+
+                
+            });
+
+        </script>
+        
+    </body>
+</html>
