@@ -1,0 +1,17 @@
+img {
+    margin: auto;
+}
+
+.jumbotron {
+    text-align: center;
+}
+.col-md-4 {
+    border: 2px solid lightblue;
+}
+.info-display{
+    padding: 10px;
+}
+
+#instContainer{
+    background-color: lightblue;
+}
